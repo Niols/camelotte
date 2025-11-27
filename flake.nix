@@ -21,6 +21,10 @@
         "aarch64-linux"
       ];
 
+      imports = [
+        ./valet/flake-part.nix
+      ];
+
       perSystem =
         {
           self',
@@ -41,18 +45,6 @@
 
         in
         {
-          packages.valet = opkgs.buildDunePackage {
-            pname = "valet";
-            version = "dev";
-            src = ./.;
-            doCheck = true;
-            propagatedBuildInputs = with opkgs; [ ppxlib ];
-            checkInputs = with opkgs; [
-              alcotest
-              ppx_inline_test
-            ];
-          };
-
           devShells.default = pkgs.mkShell {
             inputsFrom = with self'.packages; [ valet ];
             inherit (self'.checks.git-hooks) shellHook;
@@ -72,7 +64,7 @@
               topiary-latest = gitHookFor myTopiaryConfig // {
                 enable = true;
                 ## Topiary of course does not support `val` statements in `.ml` files.
-                excludes = [ "test/examples/.*\\.ml" ];
+                excludes = [ "valet/test/examples/.*\\.ml" ];
               };
             };
           };

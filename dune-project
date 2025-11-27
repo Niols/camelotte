@@ -1,9 +1,6 @@
 (lang dune 3.20)
 
-(name valet)
-
-(source (github niols/valet))
-
+(source (github niols/camelotte))
 (authors "Niols <niols@niols.fr>")
 (maintainers "Niols <niols@niols.fr>")
 
@@ -11,11 +8,9 @@
 
 (package
  (name valet)
- (synopsis "A PPX rewriter")
+ (synopsis "An OCaml preprocessor allowing to declare types from `let`-bindings with a preceeding `val` declaration.")
  (depends
-  (ocaml (>= 5.2))
-  (ppxlib (>= 0.32))
-  (alcotest :with-test)
-  (ppx_inline_test :with-test)))
+  ocaml
+  ppxlib))
 
 (formatting (enabled_for dune))

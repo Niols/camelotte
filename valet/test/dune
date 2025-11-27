@@ -1,4 +1,5 @@
 (cram
+ (package valet)
  (deps
   %{bin:valet}
   (glob_files examples/good/*.ml)
