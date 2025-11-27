@@ -71,7 +71,7 @@ jobs:
           - macos-latest
           - windows-latest
 
-    name: ${{ matrix.ocaml-compiler }} [${{ matrix.os }}]
+    name: OPAM (OCaml ${{ matrix.ocaml-compiler }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
 
     steps:
