@@ -24,6 +24,12 @@
   lwt))
 
 (package
+ (name next)
+ (synopsis "Niols's extended standard library")
+ (depends
+  (ppx_inline_test (or :build :with-test))))
+
+(package
  (name ppx_monad)
  (synopsis "A Syntax Extension for all Monadic Syntaxes")
  (depends

@@ -18,26 +18,32 @@ let pairg = tuple2g
 let pair = tuple2
 
 let tuple3g c1 c2 c3 (v1, v2, v3) =
-  c1 v1
-  ^ " " ^ c2 v2
-  ^ " " ^ c3 v3
+  c1 v1 ^
+  " " ^
+  c2 v2 ^
+  " " ^ c3 v3
 
 let tuple3 c t = tuple3g c c c t
 
 let tuple4g c1 c2 c3 c4 (v1, v2, v3, v4) =
-  c1 v1
-  ^ " " ^ c2 v2
-  ^ " " ^ c3 v3
-  ^ " " ^ c4 v4
+  c1 v1 ^
+  " " ^
+  c2 v2 ^
+  " " ^
+  c3 v3 ^
+  " " ^ c4 v4
 
 let tuple4 c t = tuple4g c c c c t
 
 let tuple5g c1 c2 c3 c4 c5 (v1, v2, v3, v4, v5) =
-  c1 v1
-  ^ " " ^ c2 v2
-  ^ " " ^ c3 v3
-  ^ " " ^ c4 v4
-  ^ " " ^ c5 v5
+  c1 v1 ^
+  " " ^
+  c2 v2 ^
+  " " ^
+  c3 v3 ^
+  " " ^
+  c4 v4 ^
+  " " ^ c5 v5
 
 let tuple5 c t = tuple5g c c c c c t
 
