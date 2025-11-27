@@ -22,6 +22,7 @@
       ];
 
       imports = [
+        ./monadise/flake-part.nix
         ./valet/flake-part.nix
       ];
 
@@ -46,7 +47,11 @@
         in
         {
           devShells.default = pkgs.mkShell {
-            inputsFrom = with self'.packages; [ valet ];
+            inputsFrom = with self'.packages; [
+              monadise
+              monadise-lwt
+              valet
+            ];
             inherit (self'.checks.git-hooks) shellHook;
             buildInputs = self'.checks.git-hooks.enabledPackages ++ [
               (gitHookBinFor myTopiaryConfig)

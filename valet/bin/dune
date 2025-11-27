@@ -1,4 +1,5 @@
 (executable
+ (package valet)
  (name valet)
  (public_name valet)
  (libraries valet ppxlib.runner))
