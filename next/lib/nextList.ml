@@ -4,16 +4,16 @@ let union_sorted compare l1 l2 =
   let rec union_sorted acc l1 l2 =
     match l1, l2 with
     | [], [] -> rev acc
-    |  _, [] -> rev_append acc l1
-    | [],  _ -> rev_append acc l2
+    | _, [] -> rev_append acc l1
+    | [], _ -> rev_append acc l2
     | h1 :: t1, h2 :: t2 ->
       let c = compare h1 h2 in
       if c < 0 then
-        union_sorted (h1::acc) t1 l2
+        union_sorted (h1 :: acc) t1 l2
       else if c > 0 then
-        union_sorted (h2::acc) l1 t2
+        union_sorted (h2 :: acc) l1 t2
       else
-        union_sorted (h1::acc) t1 t2
+        union_sorted (h1 :: acc) t1 t2
   in
   union_sorted [] l1 l2
 
@@ -43,7 +43,7 @@ let inter_sorted compare l1 l2 =
       else if c > 0 then
         inter_sorted acc l1 t2
       else
-        inter_sorted (h1::acc) t1 t2
+        inter_sorted (h1 :: acc) t1 t2
   in
   inter_sorted [] l1 l2
 
@@ -69,7 +69,7 @@ let diff_sorted compare l1 l2 =
     | h1 :: t1, h2 :: t2 ->
       let c = compare h1 h2 in
       if c < 0 then
-        diff_sorted (h1::acc) t1 l2
+        diff_sorted (h1 :: acc) t1 l2
       else if c > 0 then
         diff_sorted acc l1 t2
       else
@@ -100,9 +100,9 @@ let symdiff_sorted compare l1 l2 =
     | h1 :: t1, h2 :: t2 ->
       let c = compare h1 h2 in
       if c < 0 then
-        symdiff_sorted (h1::acc) t1 l2
+        symdiff_sorted (h1 :: acc) t1 l2
       else if c > 0 then
-        symdiff_sorted (h2::acc) l1 t2
+        symdiff_sorted (h2 :: acc) l1 t2
       else
         symdiff_sorted acc t1 t2
   in
@@ -135,7 +135,7 @@ let%test_module _ = (module struct
       let l1 = gen ~max s1 in
       let l2 = gen ~max s2 in
       (f Int.compare l1 l2 = g Int.compare l1 l2)
-      && test ~repeat:(repeat - 1) ~max s1 s2 f g
+      && test ~repeat: (repeat - 1) ~max s1 s2 f g
 
   (* union_sorted cmp l1 l2
      <=> sort_uniq cmp (l1 @ l2) *)
@@ -143,10 +143,10 @@ let%test_module _ = (module struct
   let f = union_sorted
   let g cmp l1 l2 = sort_uniq cmp (l1 @ l2)
 
-  let%test _ = test ~repeat:100 ~max:10 20 18 f g
-  let%test _ = test ~repeat:100 ~max:10 18 20 f g
-  let%test _ = test ~repeat:100 ~max:100 200 180 f g
-  let%test _ = test ~repeat:100 ~max:100_000_000 1_800 2_000 f g
+  let%test _ = test ~repeat: 100 ~max: 10 20 18 f g
+  let%test _ = test ~repeat: 100 ~max: 10 18 20 f g
+  let%test _ = test ~repeat: 100 ~max: 100 200 180 f g
+  let%test _ = test ~repeat: 100 ~max: 100_000_000 1_800 2_000 f g
 
   (* inter_sorted cmp l1 l2
      <=> filter (fun x1 -> exists (fun x2 -> cmp x1 x2 = 0) l2) l1 *)
@@ -154,10 +154,10 @@ let%test_module _ = (module struct
   let f = inter_sorted
   let g cmp l1 l2 = filter (fun x1 -> exists (fun x2 -> cmp x1 x2 = 0) l2) l1
 
-  let%test _ = test ~repeat:100 ~max:10 20 18 f g
-  let%test _ = test ~repeat:100 ~max:10 18 20 f g
-  let%test _ = test ~repeat:100 ~max:100 200 180 f g
-  let%test _ = test ~repeat:100 ~max:100_000_000 1_800 2_000 f g
+  let%test _ = test ~repeat: 100 ~max: 10 20 18 f g
+  let%test _ = test ~repeat: 100 ~max: 10 18 20 f g
+  let%test _ = test ~repeat: 100 ~max: 100 200 180 f g
+  let%test _ = test ~repeat: 100 ~max: 100_000_000 1_800 2_000 f g
 
   (* diff_sorted cmp l1 l2
      <=> filter (fun x1 -> not (exists (fun x2 -> cmp x1 x2 = 0) l2) l1 *)
@@ -165,10 +165,10 @@ let%test_module _ = (module struct
   let f = diff_sorted
   let g cmp l1 l2 = filter (fun x1 -> not (exists (fun x2 -> cmp x1 x2 = 0) l2)) l1
 
-  let%test _ = test ~repeat:100 ~max:10 20 18 f g
-  let%test _ = test ~repeat:100 ~max:10 18 20 f g
-  let%test _ = test ~repeat:100 ~max:100 200 180 f g
-  let%test _ = test ~repeat:100 ~max:100_000_000 1_800 2_000 f g
+  let%test _ = test ~repeat: 100 ~max: 10 20 18 f g
+  let%test _ = test ~repeat: 100 ~max: 10 18 20 f g
+  let%test _ = test ~repeat: 100 ~max: 100 200 180 f g
+  let%test _ = test ~repeat: 100 ~max: 100_000_000 1_800 2_000 f g
 
   (* symdiff_sorted cmp l1 l2
      <=> union_sorted (diff_sorted l1 l2) (diff_sorted l2 l1) *)
@@ -176,17 +176,18 @@ let%test_module _ = (module struct
   let f = symdiff_sorted
   let g cmp l1 l2 = union_sorted cmp (diff_sorted cmp l1 l2) (diff_sorted cmp l2 l1)
 
-  let%test _ = test ~repeat:100 ~max:10 20 18 f g
-  let%test _ = test ~repeat:100 ~max:10 18 20 f g
-  let%test _ = test ~repeat:100 ~max:100 200 180 f g
-  let%test _ = test ~repeat:100 ~max:100_000_000 1_800 2_000 f g
+  let%test _ = test ~repeat: 100 ~max: 10 20 18 f g
+  let%test _ = test ~repeat: 100 ~max: 10 18 20 f g
+  let%test _ = test ~repeat: 100 ~max: 100 200 180 f g
+  let%test _ = test ~repeat: 100 ~max: 100_000_000 1_800 2_000 f g
 end)
 
 let rec hdn n l =
   if n = 0 then []
-  else match l with
+  else
+    match l with
     | [] -> []
-    | h::q -> h :: hdn (n-1) q
+    | h :: q -> h :: hdn (n - 1) q
 
 let%test_module _ = (module struct
   let%test _ = hdn 0 [1; 2; 3; 4; 5] = []
@@ -210,7 +211,7 @@ let init_until f =
   let rec aux i acc =
     match f i with
     | None -> acc
-    | Some x -> aux (i+1) (x::acc)
+    | Some x -> aux (i + 1) (x :: acc)
   in
   rev @@ aux 0 []
 
@@ -220,11 +221,11 @@ let sub l pos len =
   let rec go_to_pos i = function
     | xs when i = pos -> gather_len 0 [] xs
     | [] -> invalid_arg "ExtList.sub"
-    | _::xs -> go_to_pos (i+1) xs
+    | _ :: xs -> go_to_pos (i + 1) xs
   and gather_len j acc = function
     | _ when j = len -> List.rev acc
     | [] -> invalid_arg "ExtList.sub"
-    | x::xs -> gather_len (j+1) (x::acc) xs
+    | x :: xs -> gather_len (j + 1) (x :: acc) xs
   in
   go_to_pos 0 l
 
@@ -250,8 +251,8 @@ let singleton x = [x]
 
 let rec update_nth n f = function
   | [] -> failwith "ExtRead.update_nth"
-  | x::xs when n=0 -> f x :: xs
-  | x::xs -> x :: update_nth (n-1) f xs
+  | x :: xs when n = 0 -> f x :: xs
+  | x :: xs -> x :: update_nth (n - 1) f xs
 
 let rec prefix_until_inclusive p = function
   | [] -> []
