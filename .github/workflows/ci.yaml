@@ -16,8 +16,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-test:
-    name: Build and test
+  nix:
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - monadise
+          - monadise-lwt
+          - next
+          - ppx_monad
+          - ppx_deriving_madcast
+          - spacedout
+          - valet
+
+    name: Nix (${{ matrix.package }})
     runs-on: ubuntu-latest
 
     steps:
@@ -33,16 +45,72 @@ jobs:
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and run tests
-        run: |
-          nix build .#packages.x86_64-linux.monadise -vL --no-link
-          nix build .#packages.x86_64-linux.monadise-lwt -vL --no-link
-          nix build .#packages.x86_64-linux.next -vL --no-link
-          nix build .#packages.x86_64-linux.ppx_monad -vL --no-link
-          nix build .#packages.x86_64-linux.ppx_deriving_madcast -vL --no-link
-          nix build .#packages.x86_64-linux.spacedout -vL --no-link
-          nix build .#packages.x86_64-linux.valet -vL --no-link
+        run: nix build .#packages.x86_64-linux.${{ matrix.package }} -vL --no-link
 
-  run-git-hooks:
+  opam:
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - monadise
+          - monadise-lwt
+          - next
+          - ppx_monad
+          - ppx_deriving_madcast
+          - spacedout
+          - valet
+
+    name: OPAM (${{matrix.package}})
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5
+
+      - name: Install dependencies
+        run: opam install ./${{matrix.package}}.opam --deps-only --with-test
+
+      - name: Build
+        run: opam exec -- dune build --for-release-of-packages ${{matrix.package}}
+
+      - name: Run tests
+        run: opam exec -- dune test --for-release-of-packages ${{matrix.package}}
+
+  opam-non-linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        system:
+          - macos-latest
+          - windows-latest
+
+    name: OPAM (all, ${{matrix.system}})
+    runs-on: ${{matrix.system}}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use OCaml
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5
+
+      - name: Install dependencies
+        run: opam install . --deps-only --with-test
+
+      - name: Build
+        run: opam exec -- dune build
+
+      - name: Run tests
+        run: opam exec -- dune test
+
+  git-hooks:
     name: Run git-hooks checks
     runs-on: ubuntu-latest
 
@@ -60,35 +128,3 @@ jobs:
 
       - name: Run pre-commit checks
         run: nix build .#checks.x86_64-linux.git-hooks -vL --no-link
-
-  opam:
-    strategy:
-      fail-fast: false
-      matrix:
-        ocaml-compiler:
-          - 5
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-
-    name: OPAM (OCaml ${{ matrix.ocaml-compiler }}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Use OCaml ${{ matrix.ocaml-compiler }}
-        uses: ocaml/setup-ocaml@v3
-        with:
-          ocaml-compiler: ${{ matrix.ocaml-compiler }}
-
-      - name: Install dependencies
-        run: opam install . --deps-only --with-test
-
-      - name: Build
-        run: opam exec -- dune build
-
-      - name: Run tests
-        run: opam exec -- dune test
