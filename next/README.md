@@ -1,5 +1,6 @@
-Niols's Extended Standard Library
+Niols's extended standard library
 =================================
 
-This repository contains an extended standard library that I use in my personal
-projects. Basically, unless you are me, you probably do not want to use it.
+This directory contains an extended standard library that Niols uses in his
+personal projects. Basically, unless you are Niols, you probably do not want to
+use it.

@@ -1,6 +1,6 @@
 # The MIT license
 
-Copyright © 2019–present Nicolas “Niols” Jeannerod
+Copyright © 2019–present Martin “Kerl” Pépin & Nicolas “Niols” Jeannerod
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the “Software”), to deal in
