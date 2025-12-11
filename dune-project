@@ -1,5 +1,7 @@
 (lang dune 3.20)
 
+(name camelotte)
+
 (source (github niols/camelotte))
 (maintainers "Niols <niols@niols.fr>")
 
@@ -22,6 +24,7 @@
  (synopsis "Monadise direct-style functions easily")
  (authors "Niols <niols@niols.fr>")
  (depends
+   monadise
   (ocaml (>= 5.0))
    lwt))
 
