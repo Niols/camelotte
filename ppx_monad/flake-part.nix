@@ -1,6 +1,6 @@
 {
   perSystem =
-    { pkgs, ... }:
+    { pkgs, utils, ... }:
     let
       opkgs = pkgs.ocamlPackages;
     in
@@ -8,7 +8,7 @@
       packages.ppx_monad = opkgs.buildDunePackage {
         pname = "ppx_monad";
         version = "dev";
-        src = ./..;
+        src = utils.thisSubdirAsDuneSource ./.;
         propagatedBuildInputs = [ opkgs.ppxlib ];
       };
     };

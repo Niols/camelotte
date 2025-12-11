@@ -34,6 +34,7 @@
         {
           self',
           pkgs,
+          lib,
           inputs',
           ...
         }:
@@ -84,6 +85,22 @@
           ## Expose the Attic client such that the CI can grab it without having
           ## to pull a different nixpkgs.
           packages.attic = pkgs.attic-client;
+
+          ## Expose a `utils` parameter to `perSystem` with a helper to make
+          ## tighter `src` arguments to the derivations.
+          ##
+          _module.args.utils = {
+            thisSubdirAsDuneSource =
+              path:
+              with lib.fileset;
+              toSource {
+                root = ./.;
+                fileset = unions [
+                  ./dune-project
+                  (gitTracked path)
+                ];
+              };
+          };
         };
 
       ## Improve the way `inputs'` are computed by also handling the case of
