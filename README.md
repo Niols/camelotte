@@ -6,7 +6,7 @@ rubbish, tat
 
 [wiktionary]: https://en.wiktionary.org/wiki/camelote
 
-Monorepo of small OCaml libraries and programs of questionable quality... 
+Monorepo of small OCaml libraries and programs of questionable quality...
 but maintained!
 
 ## Content
@@ -40,3 +40,32 @@ The Nix environment contains Git hooks that will check formatting of OCaml with
 Topiary, for instance, or that `dune-project` and the `*.opam` files are in
 sync. This is also enforced by the CI. There is currently no good way to follow
 this the OPAM way.
+
+## Importing
+
+Say you have a project `<proj>` that lives in its own repository `<repo>` and
+that should come to live in Camelotte under `<dir>/`:
+
+- Rewrite its history to have it live in a subdirectory instead:
+  ```
+  git clone <repo> <proj>
+  cd <proj>
+  git filter-repo --to-subdirectory-filter <dir>/
+  ```
+  Note: `git filter-repo` can crash monumentally on some Git configurations;
+  you might want to `mv ~/.config/git/config{,.bak}` during the rewrite.
+
+- Import the rewritten repository into Camelotte:
+  ```
+  cd camelotte
+  git remote add import /path/to/<proj>
+  git fetch import
+  git merge --allow-unrelated-histories import/main
+  ## => use “Import history from `<proj>`” as commit message
+  git remote remove import
+  ```
+
+- Then comes the work of integrating the project with the monorepo, adding it to
+  this README, to `dune-project` and `flake.nix`, importing or cleaning up
+  information from its `.gitignore`, `.github`, etc. and potentially renaming
+  its tags and recreating its releases.
