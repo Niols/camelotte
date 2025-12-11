@@ -13,10 +13,12 @@ but maintained!
 
 - [Monadise](monadise/) — Monadise direct-style functions easily
 - [Next](next/) — Niols's extended standard library
+- [ppx_deriving_madcast](ppx_deriving_madcast/) — Derive cast functions from
+  their types
 - [ppx_monad](ppx_monad/) — Syntax extension for all monadic syntaxes
 - [SpacedOut](spacedout/) — Helpers to read and write space-separated data files
-- [Valet](valet/) — Preprocessor allowing to declare types from `let`-bindings
-  with a preceeding `val` declaration
+- [Valet](valet/) — Declare types from `let`-bindings with a preceeding `val`
+  declaration
 
 ## License
 

@@ -8,5 +8,7 @@ _build
 result
 *~
 *#
+.#*
 .pre-commit-config.yaml
 *.install
+.merlin

@@ -12,7 +12,7 @@ type cell = {
 }
 
 let make_cell ?(level = (-1)) ?(higher = []) rule =
-  { rule; higher; level; }
+  {rule; higher; level;}
 
 let identity =
   let name = "'a -> 'a" in
@@ -41,10 +41,9 @@ let register ?(applies_before = []) ?(applies_after = []) rule =
   cells := SMap.add (Rule.name_ rule) cell !cells;
   identity.higher <- cell :: identity.higher;
   List.iter
-    (
-      fun rule' ->
-        let cell' = lookup_cell rule' in
-        cell'.higher <- cell :: cell'.higher
+    (fun rule' ->
+      let cell' = lookup_cell rule' in
+      cell'.higher <- cell :: cell'.higher
     )
     applies_after
 

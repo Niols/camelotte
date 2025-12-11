@@ -1,19 +1,1 @@
-
-## Dune
-_build
-*.install
-.merlin
-
-## Emacs
-*~
-*#
-.#*
-
-## Environment
-.envrc
-.direnv
-.pre-commit-config.yaml
-result
-
-## Project-specific
 ppx_deriving_madcast.[0-9]*

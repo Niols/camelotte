@@ -14,11 +14,10 @@ let () =
     |]
     |> [%madcast: string option array option array -> (int * string * string option) option list]
   in
-  let expected =
-    [
-      Some (1, "Pierre", Some "7");
-      Some (3, "Paul", None);
-      None;
-    ]
+  let expected = [
+    Some (1, "Pierre", Some "7");
+    Some (3, "Paul", None);
+    None;
+  ]
   in
   assert (actual = expected)

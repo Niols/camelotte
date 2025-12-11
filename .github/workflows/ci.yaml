@@ -38,6 +38,7 @@ jobs:
           nix build .#packages.x86_64-linux.monadise-lwt -vL --no-link
           nix build .#packages.x86_64-linux.next -vL --no-link
           nix build .#packages.x86_64-linux.ppx_monad -vL --no-link
+          nix build .#packages.x86_64-linux.ppx_deriving_madcast -vL --no-link
           nix build .#packages.x86_64-linux.spacedout -vL --no-link
           nix build .#packages.x86_64-linux.valet -vL --no-link
 
