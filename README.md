@@ -40,6 +40,9 @@ this repository:
 
 - The OPAM way: `opam install . --deps-only --with-test --with-doc`.
 
+The CI pushes the built derivations to a Nix cache, which Nix users might enjoy
+to use. The flake adds it as an `extra-trusted-substituters`.
+
 The Nix environment contains Git hooks that will check formatting of OCaml with
 Topiary, for instance, or that `dune-project` and the `*.opam` files are in
 sync. This is also enforced by the CI. There is currently no good way to follow

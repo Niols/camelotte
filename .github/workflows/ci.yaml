@@ -38,11 +38,19 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v6
       - name: Install Nix
-        uses: cachix/install-nix-action@V28
+        uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
             accept-flake-config = true
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Install Attic
+        run: nix profile add .#attic
+      - name: Set up Attic cache
+        uses: ryanccn/attic-action@v0.4
+        with:
+          endpoint: https://nix-cache.niols.fr/
+          cache: camelotte
+          token: ${{ secrets.ATTIC_TOKEN }}
       - name: Build and run tests
         run: nix build .#packages.x86_64-linux.${{ matrix.package }} -vL --no-link
 
@@ -112,11 +120,19 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v6
       - name: Install Nix
-        uses: cachix/install-nix-action@V28
+        uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
             accept-flake-config = true
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Install Attic
+        run: nix profile add .#attic
+      - name: Set up Attic cache
+        uses: ryanccn/attic-action@v0.4
+        with:
+          endpoint: https://nix-cache.niols.fr/
+          cache: camelotte
+          token: ${{ secrets.ATTIC_TOKEN }}
       - name: Run pre-commit checks
         run: nix build .#checks.x86_64-linux.git-hooks -vL --no-link
 

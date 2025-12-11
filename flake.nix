@@ -80,6 +80,10 @@
               };
             };
           };
+
+          ## Expose the Attic client such that the CI can grab it without having
+          ## to pull a different nixpkgs.
+          packages.attic = pkgs.attic-client;
         };
 
       ## Improve the way `inputs'` are computed by also handling the case of
@@ -90,12 +94,10 @@
 
   nixConfig = {
     extra-trusted-substituters = [
-      "https://pre-commit-hooks.cachix.org/"
-      "https://tweag-topiary.cachix.org/"
+      "https://nix-cache.niols.fr/camelotte"
     ];
     extra-trusted-public-keys = [
-      "pre-commit-hooks.cachix.org-1:Pkk3Panw5AW24TOv6kz3PvLhlH8puAsJTBbOPmBo7Rc="
-      "tweag-topiary.cachix.org-1:8TKqya43LAfj4qNHnljLpuBnxAY/YwEBfzo3kzXxNY0="
+      "camelotte:xTmn7pS8c2C2afYebd64iwzO1HaoJWiwZzQTS0Y1TMw="
     ];
   };
 }
