@@ -11,6 +11,10 @@ but maintained!
 
 ## Content
 
+You can also visit the [API documentation] for these packages.
+
+[API documentation]: https://lesboloss-es.github.io/Camelotte/
+
 - [Monadise](monadise/) — Monadise direct-style functions easily
 - [Next](next/) — Niols's extended standard library
 - [ppx_deriving_madcast](ppx_deriving_madcast/) — Derive cast functions from

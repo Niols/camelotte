@@ -8,6 +8,10 @@ on:
       - "*"
   pull_request:
 
+permissions:
+  pages: write
+  id-token: write
+
 ## We specify a concurrency group with automated cancellation. This means that
 ## other pushes on the same `github.ref` (eg. other pushes to the same pull
 ## request) cancel previous occurrences of the CI.
@@ -28,26 +32,21 @@ jobs:
           - ppx_deriving_madcast
           - spacedout
           - valet
-
     name: Nix (${{ matrix.package }})
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out repository code
         uses: actions/checkout@v6
-
       - name: Install Nix
         uses: cachix/install-nix-action@V28
         with:
           extra_nix_config: |
             accept-flake-config = true
-            ## Access token to avoid triggering GitHub's rate limiting.
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-
       - name: Build and run tests
         run: nix build .#packages.x86_64-linux.${{ matrix.package }} -vL --no-link
 
-  opam:
+  opam-one:
     strategy:
       fail-fast: false
       matrix:
@@ -59,72 +58,92 @@ jobs:
           - ppx_deriving_madcast
           - spacedout
           - valet
-
     name: OPAM (${{matrix.package}})
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Use OCaml
         uses: ocaml/setup-ocaml@v3
         with:
           ocaml-compiler: 5
-
       - name: Install dependencies
         run: opam install ./${{matrix.package}}.opam --deps-only --with-test
-
       - name: Build
         run: opam exec -- dune build --for-release-of-packages ${{matrix.package}}
-
       - name: Run tests
         run: opam exec -- dune test --for-release-of-packages ${{matrix.package}}
 
-  opam-non-linux:
+  opam-all:
     strategy:
       fail-fast: false
       matrix:
         system:
+          - ubuntu-latest
           - macos-latest
           - windows-latest
-
     name: OPAM (all, ${{matrix.system}})
     runs-on: ${{matrix.system}}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Use OCaml
         uses: ocaml/setup-ocaml@v3
         with:
           ocaml-compiler: 5
-
       - name: Install dependencies
         run: opam install . --deps-only --with-test
-
       - name: Build
         run: opam exec -- dune build
-
       - name: Run tests
         run: opam exec -- dune test
+      - name: Build documentation
+        run: opam exec -- dune build @doc
+      - name: Upload documentation artifact
+        if: matrix.system == 'ubuntu-latest'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _build/default/_doc/_html
 
   git-hooks:
     name: Run git-hooks checks
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out repository code
         uses: actions/checkout@v6
-
       - name: Install Nix
         uses: cachix/install-nix-action@V28
         with:
           extra_nix_config: |
             accept-flake-config = true
-            ## Access token to avoid triggering GitHub's rate limiting.
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-
       - name: Run pre-commit checks
         run: nix build .#checks.x86_64-linux.git-hooks -vL --no-link
+
+  deploy-documentation:
+    name: Deploy documentation
+    needs: opam-all
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  summarise:
+    name: Summarise
+    runs-on: ubuntu-latest
+    needs:
+      - nix
+      - opam-one
+      - opam-all
+      - git-hooks
+    if: ${{ !cancelled() }}
+    steps:
+      - name: At least one CI job failed or was cancelled
+        if: ${{ needs.nix.result == 'failure' || needs.nix.result == 'cancelled' || needs.opam-one.result == 'failure' || needs.opam-one.result == 'cancelled' || needs.opam-all.result == 'failure' || needs.opam-all.result == 'cancelled' || needs.git-hooks.result == 'failure' || needs.git-hooks.result == 'cancelled' }}
+        run: false
+      - name: All CI jobs succeeded
+        run: true
